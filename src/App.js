@@ -1,26 +1,61 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import ToDoList from "./Components/ToDoList";
+import NewTask from "./Components/NewTask";
+import Filter from "./Components/Filter";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            tasks: [],
+            filter: false
+        };
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange = (id) => {
+        //console.log(id);
+        this.setState(prevState => {
+            const updatedTasks = prevState.tasks.map(task => {
+                if (task.id === id) {
+                    return {
+                        ...task,
+                        completed: !task.completed
+                    }
+                }
+                return task
+            });
+            return {
+                tasks: updatedTasks
+            }
+        })
+    };
+
+    handleSubmit(task) {
+        this.setState({tasks: [...this.state.tasks, task]})
+    };
+
+    handleFilter = () => {
+        this.setState(prevState=>{
+            return{
+                filter:!prevState.filter
+            }
+        })
+    }
+    render() {
+        return (
+            <div>
+                <h1 className="Header">Welcome to my To Do list!</h1>
+                <div className="todo-list">
+                    <Filter handleFilter={this.handleFilter}/>
+                    <ToDoList filter={this.state.filter} tasks={this.state.tasks} handleChange={this.handleChange}/>
+                    <NewTask onFormSubmit={this.handleSubmit}/>
+                </div>
+            </div>
+        )
+    };
 }
 
 export default App;
